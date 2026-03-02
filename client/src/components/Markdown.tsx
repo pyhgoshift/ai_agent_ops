@@ -166,13 +166,25 @@ const components = {
 // MARKDOWN COMPONENT
 // ============================================================================
 
-type MarkdownProps = Omit<ComponentProps<typeof Streamdown>, "components" | "plugins"> & {
+type MarkdownProps = {
+  /** Markdown content */
+  children?: string;
   /** Override specific element renderers */
   components?: Partial<typeof components>;
   /** Enable/disable code syntax highlighting (default: true) */
   enableCode?: boolean;
   /** Enable/disable mermaid diagrams (default: true) */
   enableMermaid?: boolean;
+  /** Streaming mode */
+  mode?: "static" | "streaming";
+  /** Is animating (for streaming mode) */
+  isAnimating?: boolean;
+  /** Shiki theme */
+  shikiTheme?: [string, string];
+  /** Show controls on code blocks */
+  controls?: boolean;
+  /** CSS class name */
+  className?: string;
 };
 
 /**
@@ -200,7 +212,7 @@ export const Markdown = memo(function Markdown({
   className,
   children,
   components: customComponents,
-  shikiTheme = ["github-light", "github-dark"],
+  shikiTheme = ["github-light", "github-dark"] as [string, string],
   controls = true,
   enableCode = true,
   enableMermaid = true,
@@ -217,10 +229,9 @@ export const Markdown = memo(function Markdown({
     <Streamdown
       className={cn("text-foreground leading-relaxed", className)}
       components={{ ...components, ...customComponents }}
-      plugins={plugins}
-      shikiTheme={shikiTheme}
+      mode={props.mode}
+      isAnimating={props.isAnimating}
       controls={controls}
-      {...props}
     >
       {children}
     </Streamdown>
